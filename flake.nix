@@ -10,26 +10,24 @@
     utils.lib.eachDefaultSystem (system:
       let
         pkgs = nixpkgs.legacyPackages.${system};
-        yarn = pkgs.callPackage nnbp { };
+        bp = pkgs.callPackage nnbp { };
       in
       {
         devShell = pkgs.mkShell {
-          packages = [ pkgs.nodejs pkgs.yarn ];
+          packages = [ pkgs.nodejs-14_x ];
         };
 
         defaultPackage = self.packages.${system}.foo;
 
-        packages.foo = yarn.buildYarnPackage {
+        packages.foo = bp.buildNpmPackage {
           src = ./.;
-          yarnBuildMore = "yarn run foo | tee foo";
-          yarnPackPhase = "true";
+          npmBuild = "npm run foo | tee foo";
           installPhase = "mv foo $out";
         };
 
-        checks.bar = yarn.buildYarnPackage {
+        checks.bar = bp.buildNpmPackage {
           src = ./.;
-          yarnBuildMore = "yarn run bar | tee bar";
-          yarnPackPhase = "true";
+          npmBuild = "npm run bar | tee bar";
           installPhase = "mv bar $out";
         };
       });
