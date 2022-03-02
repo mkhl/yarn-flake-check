@@ -1,0 +1,9 @@
+{
+  "name": "yarn-flake-check",
+  "version": "0.0.0",
+  "license": "0BSD",
+  "scripts": {
+    "foo": "node -e 'console.debug(1 + 2)'",
+    "bar": "node -r assert -e 'assert(1 == 1)'"
+  }
+}
