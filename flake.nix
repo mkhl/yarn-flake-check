@@ -3,11 +3,14 @@
 
   inputs = {
     utils.url = "github:numtide/flake-utils";
+    nnbp.url = "github:serokell/nix-npm-buildpackage";
   };
 
-  outputs = { self, utils, nixpkgs }:
+  outputs = { self, utils, nnbp, nixpkgs }:
     utils.lib.eachDefaultSystem (system:
-      let pkgs = nixpkgs.legacyPackages.${system};
+      let
+        pkgs = nixpkgs.legacyPackages.${system};
+        yarn = pkgs.callPackage nnbp { };
       in
       {
         devShell = pkgs.mkShell {
@@ -16,20 +19,18 @@
 
         defaultPackage = self.packages.${system}.foo;
 
-        packages.foo = pkgs.mkYarnPackage {
+        packages.foo = yarn.buildYarnPackage {
           src = ./.;
-          configurePhase = "ln -s $node_modules node_modules";
-          buildPhase = "yarn run foo | tee foo";
+          yarnBuildMore = "yarn run foo | tee foo";
+          yarnPackPhase = "true";
           installPhase = "mv foo $out";
-          distPhase = "true";
         };
 
-        checks.bar = pkgs.mkYarnPackage {
+        checks.bar = yarn.buildYarnPackage {
           src = ./.;
-          configurePhase = "ln -s $node_modules node_modules";
-          buildPhase = "yarn run bar | tee bar";
+          yarnBuildMore = "yarn run bar | tee bar";
+          yarnPackPhase = "true";
           installPhase = "mv bar $out";
-          distPhase = "true";
         };
       });
 }
