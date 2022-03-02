@@ -14,7 +14,7 @@
       in
       {
         devShell = pkgs.mkShell {
-          packages = [ pkgs.nodejs-14_x ];
+          packages = [ pkgs.nodejs-16_x ];
         };
 
         defaultPackage = self.packages.${system}.foo;
